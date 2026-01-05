@@ -1,30 +1,31 @@
 <?php
-// valida_login.php
-session_start(); // Inicia a sessão para salvar o usuário logado
-require_once 'config/db.php';
+// actions/valida_login.php
+session_start();
+
+// ATENÇÃO: Adicionamos o "../" porque agora estamos dentro da pasta 'actions'
+require_once '../config/db.php'; 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $senha = $_POST['senha'];
 
-    // Prepara a busca no banco para evitar Hackers (SQL Injection)
+    // Prepara a busca
     $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = :email");
     $stmt->execute(['email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Verifica se achou o usuário E se a senha bate
-    // OBS: Como criamos a senha "123" manualmente no banco, comparamos direto.
-    // Em produção, usaríamos password_verify($senha, $user['senha'])
+    // Verifica senha (aqui comparando texto puro conforme seu exemplo)
     if ($user && $user['senha'] == $senha) {
-        // Sucesso! Salva os dados na sessão
         $_SESSION['usuario_id'] = $user['id'];
         $_SESSION['usuario_nome'] = $user['nome'];
         
-        header("Location: dashboard.php");
+        // CORREÇÃO: Redireciona voltando uma pasta para achar o dashboard
+        header("Location: ../dashboard.php");
         exit();
     } else {
-        // Erro: Volta pro login com aviso
-        echo "<script>alert('E-mail ou senha incorretos!'); window.location.href='index.php';</script>";
+        // CORREÇÃO: Volta para o login com erro
+        header("Location: ../index.php?erro=1");
+        exit();
     }
 }
 ?>

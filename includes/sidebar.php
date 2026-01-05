@@ -17,7 +17,7 @@
         <i class="fa-solid fa-user"></i> Meu Perfil
     </a>
     
-    <a href="logout.php" style="margin-top: auto; color: #ef4444;">
+    <a href="actions/logout.php" style="margin-top: auto; color: #ef4444;">
         <i class="fa-solid fa-right-from-bracket"></i> Sair
     </a>
 </div>

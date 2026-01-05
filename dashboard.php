@@ -107,7 +107,7 @@ include 'includes/header.php';
 </style>
 
 <div style="margin-bottom: 20px;">
-    <h2 style="margin-bottom: 5px;">Olá, Professora Luciana!</h2>
+    <h2 style="margin-bottom: 5px;">Olá, Professor(a)!</h2>
     <p style="color: var(--text-muted); font-size: 0.9rem;"><?php echo date('d/m/Y'); ?></p>
 </div>
 
