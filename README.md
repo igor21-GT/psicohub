@@ -30,10 +30,10 @@ O **PsicoHub** é uma aplicação web desenvolvida para auxiliar professores e g
 
 ## 📸 Screenshots
 ### Dashboard
-![Dashboard do Sistema](assets/screenshots/dashboard.png)
+![Dashboard do Sistema](Assets/screenshots/dashboard.png)
 
 ### Gestão de Turmas
-![Tela de Turmas](assets/screenshots/turmas.png)
+![Tela de Turmas](Assets/screenshots/turmas.png)
 
 
 ## 🚀 Como Rodar o Projeto
