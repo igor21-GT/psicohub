@@ -1,68 +1,71 @@
 # 🧠 PsicoHub - Sistema de Gestão Escolar
 
-> Um painel administrativo focado em organização pedagógica e gestão de turmas para psicologia e educação.
-
-![Badge em Desenvolvimento](http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge)
+![Status](https://img.shields.io/badge/STATUS-CONCLUÍDO_(MVP)-brightgreen?style=for-the-badge)
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+
+> Um painel administrativo robusto focado na organização pedagógica, gestão de turmas e avaliações online para psicologia e educação.
+
+---
 
 ## 💻 Sobre o Projeto
 
-O **PsicoHub** é uma aplicação web desenvolvida para auxiliar professores e gestores na organização do dia a dia escolar. Diferente de sistemas comuns, ele foca na experiência do usuário com um **Modo Escuro (Dark Mode)** elegante e ferramentas de apoio pedagógico, como planejador criativo e dicas diárias.
+O **PsicoHub** é uma aplicação web Full-Stack desenvolvida para auxiliar professores e gestores na organização do dia a dia escolar. 
+
+O diferencial deste projeto é ter sido construído **sem frameworks pesados** (CSS e PHP Puro), garantindo alta performance, controle total do código e um Design System personalizado com **Modo Escuro (Dark Mode)** e **Modo Claro (Light Mode)**.
+
+---
 
 ## ✨ Funcionalidades Principais
 
-* **📊 Dashboard Interativo:** Visão geral de turmas, eventos e status do sistema.
-* **🏫 Gestão de Turmas:**
-    * Organização visual por Turnos (Manhã/Noite) e Períodos (1º ao 10º Semestre).
-    * Cadastro, Edição e Exclusão de turmas.
-    * Visualização rápida via Cards.
-* **💡 Planejador Criativo:** Ferramenta para registrar planos de aula com "Dica Pedagógica do Dia".
-* **📝 Notas Rápidas (Sticky Notes):** Bloco de anotações que salva automaticamente no navegador.
-* **📅 Calendário Acadêmico:** Visualização mensal de eventos e compromissos.
+### 📊 Dashboard & Gestão
+- **Visão Geral:** Métricas de turmas, alunos e eventos em tempo real.
+- **Modo Claro/Escuro:** Alternância de tema com persistência visual (CSS Variables).
 
-## 🛠 Tecnologias Utilizadas
+### 🏫 Gestão Acadêmica
+- **Minhas Turmas:** Cadastro e gerenciamento de disciplinas por turno e período.
+- **Sala de Aula Virtual:** - Lista de chamada digital (Cadastro de Alunos).
+    - Galeria de Materiais (Upload de PDF, Imagens e Vídeos).
+    - Prontuário/Diário de classe (Timeline de anotações).
 
-* **Back-end:** PHP (Nativo)
-* **Banco de Dados:** MySQL
-* **Front-end:** HTML5, CSS3 (Responsivo & Dark Mode), JavaScript
-* **Servidor Local:** XAMPP (Apache)
+### 📝 Sistema de Avaliação (Quiz)
+- **Criador de Provas:** Interface para criar questões de múltipla escolha.
+- **Link Público:** Geração de links únicos para alunos responderem sem precisar de login.
+- **Correção Automática:** O sistema corrige a prova e gera a nota instantaneamente.
+- **Relatório de Desempenho:** Visualização das notas da turma com gráficos e status.
 
-## 📸 Screenshots
-### Dashboard
-![Dashboard do Sistema](Assets/screenshots/dashboard.png)
+### 📅 Organização Pessoal
+- **Planejador Integrado:** Agenda para marcar provas, reuniões e aulas.
+- **Integração com Banco de Dados:** Eventos salvos e vinculados ao professor logado.
 
-### Gestão de Turmas
-![Tela de Turmas](Assets/screenshots/turmas.png)
+---
 
+## 🛠️ Tecnologias Utilizadas
+
+- **Back-end:** PHP 8.0+ (PDO, MVC Pattern Simplificado).
+- **Banco de Dados:** MySQL (Relacional).
+- **Front-end:** HTML5, CSS3 (Flexbox/Grid, Variáveis CSS), JavaScript (Vanilla).
+- **Design:** Interface responsiva criada do zero (sem Bootstrap/Tailwind).
+- **Ícones:** FontAwesome.
+
+---
 
 ## 🚀 Como Rodar o Projeto
 
 ### Pré-requisitos
-* Ter o **XAMPP** instalado (ou outro servidor Apache/MySQL).
-* Ter o **Git** instalado.
+- Ter o **XAMPP** (ou outro servidor local Apache/MySQL) instalado.
 
-### Passo a Passo
-
-1.  **Clone o repositório** na pasta do seu servidor (ex: `htdocs`):
-    ```bash
-    git clone [https://github.com/SEU_USUARIO/psicohub.git](https://github.com/SEU_USUARIO/psicohub.git)
-    ```
-
-2.  **Importe o Banco de Dados:**
-    * Abra o phpMyAdmin (http://localhost/phpmyadmin).
-    * Crie um banco de dados chamado `psicohub`.
-    * Importe o arquivo `psicohub.sql` que está na raiz do projeto.
-
-3.  **Configure a Conexão:**
-    * Verifique se o arquivo `config/db.php` está com a senha correta do seu MySQL (geralmente `root` e senha vazia no XAMPP).
-
-4.  **Acesse o Projeto:**
-    * Abra o navegador e digite: `http://localhost/psicohub`
+---
 
 ## 👨‍💻 Autor
 
-Desenvolvido por **Igor Johnson** .
+<img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/SEU_USUARIO_GITHUB" width="100px;" alt=""/>
 
----
-*Projeto desenvolvido para fins de estudo e portfólio.*
+**Igor Pacheco** *Full Stack Developer | PHP & MySQL Expert*
+
+### Passo a Passo
+
+1. **Clone o repositório:**
+   ```bash
+   git clone [https://github.com/igor21-GT/psicohub](https://github.com/igor21-GT/psicohub)
