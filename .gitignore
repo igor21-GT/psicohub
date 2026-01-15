@@ -1,0 +1,13 @@
+# Ignorar arquivos de configuração com senhas
+config/db.php
+config/conectar.php
+*.env
+
+# Ignorar arquivos de sistema e IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Ignorar uploads pesados (se quiser)
+uploads/*
+!uploads/.gitkeep
