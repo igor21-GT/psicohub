@@ -1,87 +1,68 @@
-<div align="center">
+# 🧠 PsicoHub - Sistema de Gestão Escolar
 
-  # 🧠 PsicoHub
-  **Sistema Integrado de Gestão Escolar & Apoio Pedagógico**
+> Um painel administrativo focado em organização pedagógica e gestão de turmas para psicologia e educação.
 
-  <p>
-    <a href="#sobre">Sobre</a> •
-    <a href="#funcionalidades">Funcionalidades</a> •
-    <a href="#tecnologias">Tecnologias</a> •
-    <a href="#autor">Autor</a>
-  </p>
+![Badge em Desenvolvimento](http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge)
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white)
 
-  <p>
-    <img src="https://img.shields.io/badge/PHP-8.0+-777BB4?style=for-the-badge&logo=php&logoColor=white" />
-    <img src="https://img.shields.io/badge/MySQL-Database-005C84?style=for-the-badge&logo=mysql&logoColor=white" />
-    <img src="https://img.shields.io/badge/HTML5-Semântico-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
-    <img src="https://img.shields.io/badge/CSS3-Nativo-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
-  </p>
+## 💻 Sobre o Projeto
 
-</div>
+O **PsicoHub** é uma aplicação web desenvolvida para auxiliar professores e gestores na organização do dia a dia escolar. Diferente de sistemas comuns, ele foca na experiência do usuário com um **Modo Escuro (Dark Mode)** elegante e ferramentas de apoio pedagógico, como planejador criativo e dicas diárias.
+
+## ✨ Funcionalidades Principais
+
+* **📊 Dashboard Interativo:** Visão geral de turmas, eventos e status do sistema.
+* **🏫 Gestão de Turmas:**
+    * Organização visual por Turnos (Manhã/Noite) e Períodos (1º ao 10º Semestre).
+    * Cadastro, Edição e Exclusão de turmas.
+    * Visualização rápida via Cards.
+* **💡 Planejador Criativo:** Ferramenta para registrar planos de aula com "Dica Pedagógica do Dia".
+* **📝 Notas Rápidas (Sticky Notes):** Bloco de anotações que salva automaticamente no navegador.
+* **📅 Calendário Acadêmico:** Visualização mensal de eventos e compromissos.
+
+## 🛠 Tecnologias Utilizadas
+
+* **Back-end:** PHP (Nativo)
+* **Banco de Dados:** MySQL
+* **Front-end:** HTML5, CSS3 (Responsivo & Dark Mode), JavaScript
+* **Servidor Local:** XAMPP (Apache)
+
+## 📸 Screenshots
+### Dashboard
+![Dashboard do Sistema](Assets/screenshots/dashboard.png)
+
+### Gestão de Turmas
+![Tela de Turmas](Assets/screenshots/turmas.png)
+
+
+## 🚀 Como Rodar o Projeto
+
+### Pré-requisitos
+* Ter o **XAMPP** instalado (ou outro servidor Apache/MySQL).
+* Ter o **Git** instalado.
+
+### Passo a Passo
+
+1.  **Clone o repositório** na pasta do seu servidor (ex: `htdocs`):
+    ```bash
+    git clone [https://github.com/SEU_USUARIO/psicohub.git](https://github.com/SEU_USUARIO/psicohub.git)
+    ```
+
+2.  **Importe o Banco de Dados:**
+    * Abra o phpMyAdmin (http://localhost/phpmyadmin).
+    * Crie um banco de dados chamado `psicohub`.
+    * Importe o arquivo `psicohub.sql` que está na raiz do projeto.
+
+3.  **Configure a Conexão:**
+    * Verifique se o arquivo `config/db.php` está com a senha correta do seu MySQL (geralmente `root` e senha vazia no XAMPP).
+
+4.  **Acesse o Projeto:**
+    * Abra o navegador e digite: `http://localhost/psicohub`
+
+## 👨‍💻 Autor
+
+Desenvolvido por **Igor Johnson** .
 
 ---
-
-## 🚀 Sobre o Projeto
-
-O **PsicoHub** é uma plataforma desenvolvida para modernizar a rotina de professores e psicólogos educacionais. 
-
-Diferente de sistemas administrativos comuns, ele foi pensado na **experiência do usuário**: possui um **Modo Escuro (Dark Mode)** nativo para reduzir o cansaço visual e ferramentas pedagógicas integradas, como planejador de aulas e criador de avaliações.
-
-> **Destaque Técnico:** Todo o sistema foi construído "do zero" (Vanilla), sem dependência de frameworks pesados, garantindo código limpo e alta performance.
-
----
-
-## ⚡ Funcionalidades Principais
-
-### 🎓 Para o Professor (Painel Administrativo)
-- [x] **Dashboard Interativo:** Visão geral de turmas e eventos do dia.
-- [x] **Gestão de Turmas:** Organização por turnos e períodos letivos.
-- [x] **Sala de Aula Virtual:** - Cadastro e gerenciamento de alunos.
-    - Upload de materiais (PDFs, Vídeos, Imagens).
-    - Diário de classe digital.
-- [x] **Planejador (Agenda):** Calendário integrado ao banco de dados para organizar aulas e reuniões.
-- [x] **Notas Rápidas:** Sistema de *Sticky Notes* para lembretes rápidos.
-
-### 📝 Sistema de Avaliação (Quiz Engine)
-- [x] **Criador de Provas:** Interface dinâmica para adicionar questões de múltipla escolha.
-- [x] **Links Públicos:** Geração de Tokens únicos para alunos acessarem a prova externamente.
-- [x] **Correção Automática:** Algoritmo que calcula a nota e gera o feedback instantâneo.
-- [x] **Relatórios:** Tabela de desempenho da turma com indicação visual de aprovados/reprovados.
-
-### 🎨 Design & UX
-- [x] **Theme Switcher:** Alternância entre Tema Claro e Escuro com persistência de dados.
-- [x] **Design Responsivo:** Adaptável para desktops e dispositivos móveis.
-
----
-
-## 🛠️ Instalação e Configuração
-
-```bash
-# 1. Clone o repositório
-git clone [https://github.com/igor21-GT/PsicoHub.git](https://github.com/igor21-GT/PsicoHub.git)
-
-# 2. Banco de Dados
-# Crie um banco chamado 'psicohub' no MySQL e importe o arquivo 'database.sql'
-
-# 3. Configuração
-# Ajuste as credenciais no arquivo 'config/db.php'
-
-# 4. Execução
-# Acesse através do seu servidor local (ex: http://localhost/PsicoHub)
-
-👨‍💻 Autor
-<div align="center">
-
-<img src="https://www.google.com/search?q=https://github.com/igor21-GT.png" width="100px;" alt="Foto do Igor Pacheco" style="border-radius: 50%;"/>
-
-<br />
-
-Igor Pacheco
-Full Stack Developer
-
-<p> Desenvolvedor focado em criar soluções eficientes e interfaces intuitivas.
-
-
-Especialista em PHP, MySQL e Desenvolvimento Web Moderno. </p>
-
-<a href="https://www.linkedin.com/in/igor-pacheco-5a315b310/">
+*Projeto desenvolvido para fins de estudo e portfólio.*
