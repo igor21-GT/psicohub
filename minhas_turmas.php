@@ -59,8 +59,8 @@ foreach ($todas_turmas as $t) {
                         <a href="editar_turma.php?id=<?php echo $turma['id']; ?>" title="Editar" style="color: var(--text-muted); margin-right: 10px;">
                             <i class="fa-solid fa-pen"></i>
                         </a>
-                        <a href="excluir_generico.php?tipo=turma&id=<?php echo $turma['id']; ?>" 
-                           onclick="return confirm('Excluir esta turma?');" style="color: #ef4444;">
+                        <a href="actions/excluir_generico.php?tipo=turma&id=<?php echo $turma['id']; ?>" 
+                           onclick="return confirm('Tem certeza que deseja excluir esta turma?');" style="color: #ef4444;">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </div>
@@ -101,8 +101,8 @@ foreach ($todas_turmas as $t) {
                         <a href="editar_turma.php?id=<?php echo $turma['id']; ?>" title="Editar" style="color: var(--text-muted); margin-right: 10px;">
                             <i class="fa-solid fa-pen"></i>
                         </a>
-                        <a href="excluir_generico.php?tipo=turma&id=<?php echo $turma['id']; ?>" 
-                           onclick="return confirm('Excluir esta turma?');" style="color: #ef4444;">
+                        <a href="actions/excluir_generico.php?tipo=turma&id=<?php echo $turma['id']; ?>" 
+                           onclick="return confirm('Tem certeza que deseja excluir esta turma?');" style="color: #ef4444;">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </div>
@@ -133,7 +133,7 @@ foreach ($todas_turmas as $t) {
     <div class="modal-content">
         <span class="close-btn" onclick="fecharModal()">&times;</span>
         <h2>Nova Turma</h2><br>
-        <form action="salvar_turma.php" method="POST">
+        <form action="actions/salvar_turma.php" method="POST">
             
             <div class="form-group">
                 <label>Nome da Turma</label>

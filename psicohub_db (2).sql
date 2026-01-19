@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 15/01/2026 às 13:59
+-- Tempo de geração: 19/01/2026 às 18:21
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -76,6 +76,22 @@ CREATE TABLE `anotacoes` (
 -- --------------------------------------------------------
 
 --
+-- Estrutura para tabela `entregas`
+--
+
+CREATE TABLE `entregas` (
+  `id` int(11) NOT NULL,
+  `material_id` int(11) NOT NULL,
+  `aluno_nome` varchar(100) NOT NULL,
+  `arquivo_path` varchar(255) NOT NULL,
+  `data_entrega` datetime DEFAULT current_timestamp(),
+  `nota` decimal(4,1) DEFAULT NULL,
+  `resposta_texto` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura para tabela `materiais`
 --
 
@@ -83,10 +99,25 @@ CREATE TABLE `materiais` (
   `id` int(11) NOT NULL,
   `turma_id` int(11) NOT NULL,
   `titulo` varchar(100) NOT NULL,
+  `tipo` varchar(20) DEFAULT NULL,
+  `conteudo` text DEFAULT NULL,
+  `arquivo_path` varchar(255) DEFAULT NULL,
   `caminho_arquivo` varchar(255) NOT NULL,
   `tipo_arquivo` varchar(20) DEFAULT NULL,
-  `data_upload` timestamp NOT NULL DEFAULT current_timestamp()
+  `data_upload` timestamp NOT NULL DEFAULT current_timestamp(),
+  `data_postagem` timestamp NOT NULL DEFAULT current_timestamp(),
+  `data_limite` date DEFAULT NULL,
+  `valor_nota` decimal(4,1) DEFAULT NULL,
+  `formato` varchar(20) DEFAULT 'upload',
+  `opcoes_json` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `materiais`
+--
+
+INSERT INTO `materiais` (`id`, `turma_id`, `titulo`, `tipo`, `conteudo`, `arquivo_path`, `caminho_arquivo`, `tipo_arquivo`, `data_upload`, `data_postagem`, `data_limite`, `valor_nota`, `formato`, `opcoes_json`) VALUES
+(9, 3, 'Evento de consults', 'PDF', '', 'uploads/696e4977643b6.pdf', '', NULL, '2026-01-19 15:10:47', '2026-01-19 15:10:47', NULL, NULL, 'upload', NULL);
 
 -- --------------------------------------------------------
 
@@ -106,11 +137,11 @@ CREATE TABLE `opcoes` (
 --
 
 INSERT INTO `opcoes` (`id`, `questao_id`, `texto_opcao`, `eh_correta`) VALUES
-(1, 1, 'efrfe', 0),
-(2, 1, 'erfver', 0),
-(3, 1, 'erfge', 0),
-(4, 1, 'gerf', 1),
-(5, 1, 'ger', 0);
+(16, 4, 'rbrfr', 1),
+(17, 4, 'rbr', 0),
+(18, 4, 'rthbr', 0),
+(19, 4, 'rthbrh', 0),
+(20, 4, 'brbrt', 0);
 
 -- --------------------------------------------------------
 
@@ -151,7 +182,7 @@ CREATE TABLE `questoes` (
 --
 
 INSERT INTO `questoes` (`id`, `quiz_id`, `enunciado`, `tipo`) VALUES
-(1, 1, 'fef', 'multipla_escolha');
+(4, 4, 'trbrt', 'multipla_escolha');
 
 -- --------------------------------------------------------
 
@@ -173,7 +204,7 @@ CREATE TABLE `quizzes` (
 --
 
 INSERT INTO `quizzes` (`id`, `turma_id`, `titulo`, `descricao`, `token_acesso`, `data_criacao`) VALUES
-(1, 9, 'fefe', 'efef', '896b11c13f432893', '2026-01-15 08:29:58');
+(4, 3, 'Evento de consults', 'gbfb', 'c622e2dfcf66c8ad', '2026-01-19 13:16:10');
 
 -- --------------------------------------------------------
 
@@ -191,15 +222,6 @@ CREATE TABLE `respostas_alunos` (
   `data_envio` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Despejando dados para a tabela `respostas_alunos`
---
-
-INSERT INTO `respostas_alunos` (`id`, `quiz_id`, `nome_aluno`, `email_aluno`, `matricula_aluno`, `nota_final`, `data_envio`) VALUES
-(1, 1, 'rftbrt', 'igorpachecoalbuquerque1803r@gmail.com', '87654334', 10.00, '2026-01-15 08:35:44'),
-(2, 1, 'rftbrt', 'igorpachecoalbuquerque1803r@gmail.com', '87654334', 10.00, '2026-01-15 08:52:33'),
-(3, 1, 'rftbrt', 'igorpachecoalbuquerque1803r@gmail.com', '87654334', 0.00, '2026-01-15 09:57:43');
-
 -- --------------------------------------------------------
 
 --
@@ -215,20 +237,18 @@ CREATE TABLE `turmas` (
   `horario` varchar(50) DEFAULT NULL,
   `status` enum('Ativo','Inativo') DEFAULT 'Ativo',
   `periodo` varchar(50) DEFAULT 'Geral',
-  `professor_id` int(11) NOT NULL DEFAULT 1
+  `professor_id` int(11) NOT NULL DEFAULT 1,
+  `token_acesso` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Despejando dados para a tabela `turmas`
 --
 
-INSERT INTO `turmas` (`id`, `nome`, `disciplina`, `turno`, `descricao`, `horario`, `status`, `periodo`, `professor_id`) VALUES
-(1, 'Terapia Grupo A', NULL, 'Noite', 'Foco em ansiedade social e comunicação.', 'Segundas - 14h', 'Ativo', 'Geral', 1),
-(2, 'Acompanhamento Infantil', NULL, 'Noite', 'Desenvolvimento cognitivo para crianças.', 'Terças - 09h', 'Ativo', 'Geral', 1),
-(3, 'Plantão Psicológico', NULL, 'Noite', 'Atendimento de emergência e triagem.', 'Sextas - 18h', 'Inativo', 'Geral', 1),
-(4, 'EU SOU DEMAIS ', 'IGOR É FODAAAA', 'Manhã', '', '', 'Ativo', 'Geral', 1),
-(8, 'Teste 1', 'Teste 1', 'Manhã', '', '', 'Ativo', 'Geral', 1),
-(9, 'Teste 1', 'Teste 1', 'Manhã', '2wefcwev', 'vwevw', 'Ativo', 'Geral', 1);
+INSERT INTO `turmas` (`id`, `nome`, `disciplina`, `turno`, `descricao`, `horario`, `status`, `periodo`, `professor_id`, `token_acesso`) VALUES
+(2, 'Acompanhamento Infantil', NULL, 'Noite', 'Desenvolvimento cognitivo para crianças.', 'Terças - 09h', 'Ativo', 'Geral', 1, 'cde040cb51dcf4153968318b307bbcd4'),
+(3, 'Plantão Psicológico', NULL, 'Noite', 'Atendimento de emergência e triagem.', 'Sextas - 18h', 'Inativo', 'Geral', 1, '10d3f9b43c653cf98f2b5e94aae76815'),
+(4, 'EU SOU DEMAIS ', 'IGOR É FODAAAA', 'Manhã', '', '', 'Ativo', 'Geral', 1, 'f1746975d37b321c121fefd7281eddf8');
 
 -- --------------------------------------------------------
 
@@ -274,6 +294,13 @@ ALTER TABLE `alunos`
 ALTER TABLE `anotacoes`
   ADD PRIMARY KEY (`id`),
   ADD KEY `turma_id` (`turma_id`);
+
+--
+-- Índices de tabela `entregas`
+--
+ALTER TABLE `entregas`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `material_id` (`material_id`);
 
 --
 -- Índices de tabela `materiais`
@@ -338,7 +365,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de tabela `agendamentos`
 --
 ALTER TABLE `agendamentos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de tabela `alunos`
@@ -353,16 +380,22 @@ ALTER TABLE `anotacoes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de tabela `entregas`
+--
+ALTER TABLE `entregas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de tabela `materiais`
 --
 ALTER TABLE `materiais`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de tabela `opcoes`
 --
 ALTER TABLE `opcoes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de tabela `planos_aula`
@@ -374,19 +407,19 @@ ALTER TABLE `planos_aula`
 -- AUTO_INCREMENT de tabela `questoes`
 --
 ALTER TABLE `questoes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `quizzes`
 --
 ALTER TABLE `quizzes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `respostas_alunos`
 --
 ALTER TABLE `respostas_alunos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `turmas`
@@ -415,6 +448,12 @@ ALTER TABLE `alunos`
 --
 ALTER TABLE `anotacoes`
   ADD CONSTRAINT `anotacoes_ibfk_1` FOREIGN KEY (`turma_id`) REFERENCES `turmas` (`id`) ON DELETE CASCADE;
+
+--
+-- Restrições para tabelas `entregas`
+--
+ALTER TABLE `entregas`
+  ADD CONSTRAINT `entregas_ibfk_1` FOREIGN KEY (`material_id`) REFERENCES `materiais` (`id`) ON DELETE CASCADE;
 
 --
 -- Restrições para tabelas `materiais`

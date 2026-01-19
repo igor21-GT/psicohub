@@ -1,7 +1,7 @@
 <?php
 // actions/excluir_generico.php
 session_start();
-require_once '../config/db.php'; // Note o '../' para voltar uma pasta
+require_once '../config/db.php';
 
 // Segurança: Se não tiver logado, tchau
 if (!isset($_SESSION['usuario_id'])) {
@@ -16,39 +16,87 @@ if (isset($_GET['tipo']) && isset($_GET['id'])) {
 
     try {
         switch ($tipo) {
-            case 'evento':
-                // Apaga do Planejador (Só se for dono do evento)
-                $stmt = $pdo->prepare("DELETE FROM agendamentos WHERE id = :id AND usuario_id = :uid");
+            case 'material':
+                // 1. Apaga arquivo físico
+                $stmt = $pdo->prepare("SELECT arquivo_path FROM materiais WHERE id = :id");
+                $stmt->execute(['id' => $id]);
+                $alvo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($alvo && !empty($alvo['arquivo_path'])) {
+                    $caminho = '../' . $alvo['arquivo_path'];
+                    if (file_exists($caminho)) unlink($caminho);
+                }
+                // 2. Apaga do banco
+                $pdo->prepare("DELETE FROM materiais WHERE id = :id")->execute(['id' => $id]);
+                break;
+
+            case 'turma':
+                // Faxina completa antes de apagar a turma (IMPORTANTE)
+                $stmt = $pdo->prepare("SELECT id FROM turmas WHERE id = :id AND professor_id = :uid");
                 $stmt->execute(['id' => $id, 'uid' => $usuario_id]);
+                if (!$stmt->fetch()) die("Acesso negado.");
+
+                // Apagar Materiais
+                $stmtMat = $pdo->prepare("SELECT arquivo_path FROM materiais WHERE turma_id = :id");
+                $stmtMat->execute(['id' => $id]);
+                while ($m = $stmtMat->fetch(PDO::FETCH_ASSOC)) {
+                    if (!empty($m['arquivo_path'])) {
+                        $arq = '../' . $m['arquivo_path'];
+                        if (file_exists($arq)) unlink($arq);
+                    }
+                }
+                $pdo->prepare("DELETE FROM materiais WHERE turma_id = :id")->execute(['id' => $id]);
+
+                // Apagar Quizzes (Cascata)
+                $stmtQ = $pdo->prepare("SELECT id FROM quizzes WHERE turma_id = :id");
+                $stmtQ->execute(['id' => $id]);
+                $quizzesIds = $stmtQ->fetchAll(PDO::FETCH_COLUMN);
+                if (!empty($quizzesIds)) {
+                    $idsStr = implode(',', $quizzesIds);
+                    // Apaga respostas dos alunos nesses quizzes
+                    $pdo->query("DELETE FROM respostas_alunos WHERE quiz_id IN ($idsStr)");
+                    // Apaga as opções das questões desses quizzes
+                    $pdo->query("DELETE FROM opcoes WHERE questao_id IN (SELECT id FROM questoes WHERE quiz_id IN ($idsStr))");
+                    // Apaga as questões desses quizzes
+                    $pdo->query("DELETE FROM questoes WHERE quiz_id IN ($idsStr)");
+                    // Apaga os quizzes
+                    $pdo->query("DELETE FROM quizzes WHERE id IN ($idsStr)");
+                }
+
+                // Apagar resto
+                $pdo->prepare("DELETE FROM alunos WHERE turma_id = :id")->execute(['id' => $id]);
+                $pdo->prepare("DELETE FROM anotacoes WHERE turma_id = :id")->execute(['id' => $id]);
+                $pdo->prepare("DELETE FROM turmas WHERE id = :id")->execute(['id' => $id]);
+                break;
+
+            case 'evento':
+                $pdo->prepare("DELETE FROM agendamentos WHERE id = :id AND usuario_id = :uid")->execute(['id' => $id, 'uid' => $usuario_id]);
                 break;
 
             case 'quiz':
-                // Apaga o Quiz e as Respostas atreladas (Cascade manual se necessário)
-                // Primeiro apaga respostas dos alunos
+                // 1. Apagar Respostas dos Alunos vinculadas a este quiz
                 $pdo->prepare("DELETE FROM respostas_alunos WHERE quiz_id = :id")->execute(['id' => $id]);
-                // Depois apaga o quiz
-                $stmt = $pdo->prepare("DELETE FROM quizzes WHERE id = :id"); // Adicionar validação de turma/professor aqui seria ideal
-                $stmt->execute(['id' => $id]);
+                
+                // 2. Apagar Opções das Questões vinculadas a este quiz (Cascata manual)
+                $pdo->prepare("DELETE FROM opcoes WHERE questao_id IN (SELECT id FROM questoes WHERE quiz_id = :id)")->execute(['id' => $id]);
+                
+                // 3. Apagar Questões vinculadas a este quiz
+                $pdo->prepare("DELETE FROM questoes WHERE quiz_id = :id")->execute(['id' => $id]);
+                
+                // 4. Finalmente, apagar o Quiz
+                $pdo->prepare("DELETE FROM quizzes WHERE id = :id")->execute(['id' => $id]);
                 break;
 
-            case 'resposta':
-                // Apaga uma nota específica de aluno
-                $stmt = $pdo->prepare("DELETE FROM respostas_alunos WHERE id = :id");
-                $stmt->execute(['id' => $id]);
-                break;
-                
-            case 'turma':
-                // Apaga uma turma inteira (Cuidado!)
-                $stmt = $pdo->prepare("DELETE FROM turmas WHERE id = :id AND professor_id = :uid");
-                $stmt->execute(['id' => $id, 'uid' => $usuario_id]);
+            case 'aluno':
+                $pdo->prepare("DELETE FROM respostas_alunos WHERE aluno_id = :id")->execute(['id' => $id]);
+                $pdo->prepare("DELETE FROM alunos WHERE id = :id")->execute(['id' => $id]);
                 break;
         }
 
-        // Redireciona de volta para a página de onde veio
         if(isset($_SERVER['HTTP_REFERER'])) {
             header("Location: " . $_SERVER['HTTP_REFERER']);
         } else {
-            header("Location: ../dashboard.php");
+            header("Location: ../minhas_turmas.php");
         }
         exit();
 
@@ -56,8 +104,7 @@ if (isset($_GET['tipo']) && isset($_GET['id'])) {
         die("Erro ao excluir: " . $e->getMessage());
     }
 } else {
-    // Se tentar acessar direto sem ID
-    header("Location: ../dashboard.php");
+    header("Location: ../minhas_turmas.php");
     exit();
 }
 ?>

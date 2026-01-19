@@ -22,13 +22,13 @@ try {
     $total_turmas = 0; $proximos_eventos_count = 0;
 }
 
-// Média Geral da Escola (NOVO - Substitui o card de status)
+// Média Geral da Escola
 try {
     $stmt = $pdo->query("SELECT AVG(nota_final) FROM respostas_alunos");
     $media_geral = number_format((float)$stmt->fetchColumn(), 1);
 } catch (Exception $e) { $media_geral = "0.0"; }
 
-// Feed de Atividades Recentes (NOVO - Une Quizzes e Materiais)
+// Feed de Atividades Recentes
 $sql_feed = "
     (SELECT 'quiz' as tipo, nome_aluno as autor, nota_final as info, data_envio as data, quizzes.titulo as extra 
      FROM respostas_alunos 
@@ -42,49 +42,60 @@ try {
     $feed = $pdo->query($sql_feed)->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) { $feed = []; }
 
-// Agenda Rápida
+// Agenda Rápida (Lista lateral)
 try {
     $stmt = $pdo->query("SELECT * FROM agendamentos WHERE data_evento >= NOW() ORDER BY data_evento ASC LIMIT 3");
     $agenda_rapida = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) { $agenda_rapida = []; }
 
-// Planos de Aula Recentes
-try {
-    $stmt_planos = $pdo->query("SELECT * FROM planos_aula ORDER BY data_criacao DESC LIMIT 3");
-    $ultimos_planos = $stmt_planos->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) { $ultimos_planos = []; }
 
-// --- 2. LÓGICA DO CALENDÁRIO (Mantida) ---
+// --- 2. LÓGICA DO CALENDÁRIO COM EVENTOS DO BANCO ---
+
+// Definir mês e ano
 $mes_atual = isset($_GET['mes']) ? (int)$_GET['mes'] : date('n');
 $ano_atual = isset($_GET['ano']) ? (int)$_GET['ano'] : date('Y');
 
+// Navegação entre meses
 $mes_ant = $mes_atual - 1; $ano_ant = $ano_atual;
 if ($mes_ant < 1) { $mes_ant = 12; $ano_ant--; }
 
 $mes_prox = $mes_atual + 1; $ano_prox = $ano_atual;
 if ($mes_prox > 12) { $mes_prox = 1; $ano_prox++; }
 
+// Dados do Calendário
 $meses_nomes = [1 => 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 $nome_mes = $meses_nomes[$mes_atual];
 $num_dias_mes = cal_days_in_month(CAL_GREGORIAN, $mes_atual, $ano_atual);
 $primeiro_dia_sem = date('w', strtotime("$ano_atual-$mes_atual-01")); 
 $dia_hoje = date('d');
-$mes_real = date('n'); 
+$mes_real = date('n');
+$ano_real = date('Y');
+
+// [NOVO] Buscar dias que têm eventos neste mês específico para pintar no calendário
+$dias_com_eventos = [];
+try {
+    $stmt_cal = $pdo->prepare("SELECT DISTINCT DAY(data_evento) as dia FROM agendamentos WHERE MONTH(data_evento) = :mes AND YEAR(data_evento) = :ano");
+    $stmt_cal->execute([':mes' => $mes_atual, ':ano' => $ano_atual]);
+    $dias_com_eventos = $stmt_cal->fetchAll(PDO::FETCH_COLUMN); // Retorna array simples: [5, 12, 19...]
+} catch (Exception $e) {
+    // Falha silenciosa para não quebrar a tela
+}
 
 include 'includes/header.php'; 
 ?>
 
 <style>
+    /* Estilos Gerais */
     .cal-nav-btn {
         text-decoration: none;
         color: var(--text-muted);
         padding: 5px 10px;
         border-radius: 5px;
         font-weight: bold;
+        transition: 0.2s;
     }
     .cal-nav-btn:hover { background-color: var(--bg-color); color: var(--sidebar-active); }
     
-    /* Estilos do Feed */
     .feed-item {
         display: flex; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-color);
         align-items: flex-start;
@@ -96,6 +107,50 @@ include 'includes/header.php';
         display: flex; align-items: center; justify-content: center;
         font-size: 0.9rem;
     }
+
+    /* Estilos Específicos do Calendário Novo */
+    .calendar-grid {
+        display: grid; 
+        grid-template-columns: repeat(7, 1fr); 
+        gap: 5px; 
+        font-size: 0.85rem;
+    }
+    .calendar-day {
+        padding: 6px;
+        color: var(--text-color);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        cursor: default;
+    }
+    /* Dia Atual */
+    .day-today { 
+        background-color: var(--sidebar-active) !important; 
+        color: white !important; 
+        box-shadow: 0 4px 6px rgba(139, 92, 246, 0.3);
+        font-weight: 600;
+    }
+    /* Dia com Evento */
+    .day-has-event {
+        background-color: rgba(16, 185, 129, 0.1); /* Fundo verde bem clarinho */
+        color: #065f46;
+        font-weight: bold;
+    }
+    /* Bolinha indicadora de evento */
+    .event-dot {
+        width: 5px; 
+        height: 5px; 
+        background-color: #10b981; 
+        border-radius: 50%; 
+        margin-top: 2px;
+    }
+    /* Bolinha branca se for hoje */
+    .day-today .event-dot { background-color: white; }
+
+    @media (max-width: 768px) { .grid-container { grid-template-columns: 1fr !important; } }
 </style>
 
 <div style="margin-bottom: 20px;">
@@ -237,13 +292,33 @@ include 'includes/header.php';
                 <div style="color: var(--text-muted);">Q</div><div style="color: var(--text-muted);">Q</div><div style="color: var(--text-muted);">S</div><div style="color: var(--text-muted);">S</div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; font-size: 0.85rem;">
+            <div class="calendar-grid">
                 <?php
-                for ($i = 0; $i < $primeiro_dia_sem; $i++) echo "<div></div>";
+                // Dias Vazios do Início
+                for ($i = 0; $i < $primeiro_dia_sem; $i++) {
+                    echo "<div></div>";
+                }
+
+                // Dias do Mês
                 for ($dia = 1; $dia <= $num_dias_mes; $dia++) {
-                    $eh_hoje = ($dia == $dia_hoje && $mes_atual == $mes_real && $ano_atual == date('Y'));
-                    if ($eh_hoje) echo "<div style='background-color: var(--sidebar-active); color: white; border-radius: 50%; width: 28px; height: 28px; line-height: 28px; margin: 0 auto; font-weight:600;'>$dia</div>";
-                    else echo "<div style='padding: 4px; color: var(--text-color);'>$dia</div>";
+                    // Verifica se é hoje
+                    $eh_hoje = ($dia == $dia_hoje && $mes_atual == $mes_real && $ano_atual == $ano_real);
+                    
+                    // Verifica se tem evento (busca no array que criamos lá em cima)
+                    $tem_evento = in_array($dia, $dias_com_eventos);
+                    
+                    // Define as classes CSS
+                    $classe = "calendar-day";
+                    if ($eh_hoje) $classe .= " day-today";
+                    elseif ($tem_evento) $classe .= " day-has-event";
+
+                    echo "<div class='$classe'>";
+                    echo $dia;
+                    // Se tiver evento, coloca a bolinha (exceto se for hoje, aí a bolinha já é branca por CSS)
+                    if ($tem_evento) {
+                        echo "<div class='event-dot'></div>";
+                    }
+                    echo "</div>";
                 }
                 ?>
             </div>
@@ -278,9 +353,5 @@ include 'includes/header.php';
         <?php endif; ?>
     </div>
 </div>
-
-<style>
-    @media (max-width: 768px) { .grid-container { grid-template-columns: 1fr !important; } }
-</style>
 
 <?php include 'includes/footer.php'; ?>
